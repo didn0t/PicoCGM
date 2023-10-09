@@ -9,7 +9,7 @@ I am currently working with data from a Libre 2 CGM which updates every 5 minute
 
 # Disclaimer
 
-I am not a medical professioinal.  **Do not use for medical/dosing desicions.**
+I am not a medical professional.  **Do not use for medical/dosing desicions.**
 
 # Required Parts to Build
 
