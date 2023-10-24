@@ -116,7 +116,7 @@ def display_text(bg, obg, direction, end):
 
     
 def display_graph(data):
-    if data != None:
+    if data != None and data != []:
         start = data[-1]['date']//1000
         end = data[0]['date']//1000
         display.set_pen(BLACK)
