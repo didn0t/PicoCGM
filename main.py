@@ -72,15 +72,20 @@ def fetch_nightscout_data(delta):
 def draw_arrow(direction, x, y, pen):
     direction_map = {           
         "SingleUp": 	(0,2,1,0,2,2),
+        "DoubleUp": 	(0,2,1,0,2,2),
         "FortyFiveUp": 	(0,0,2,0,2,2),
         "Flat": 		(0,0,1,1,0,2),
         "FortyFiveDown":(0,2,2,0,2,2),
         "SingleDown": 	(0,0,1,2,2,0),
+        "DoubleDown": 	(0,0,1,2,2,0)
     }
     scale = 12
-    x1, y1, x2, y2, x3, y3 = direction_map[direction]
-    display.set_pen(pen)
-    display.triangle(x+x1*scale, y+y1*scale, x+x2*scale, y+y2*scale, x+x3*scale, y+y3*scale)
+    if direction in direction_map:
+        x1, y1, x2, y2, x3, y3 = direction_map[direction]
+        display.set_pen(pen)
+        display.triangle(x+x1*scale, y+y1*scale, x+x2*scale, y+y2*scale, x+x3*scale, y+y3*scale)
+    else:
+        print(f"[]] Direction: {direction} is not defined")
 
 
 def display_text(bg, obg, direction, end):
@@ -92,8 +97,11 @@ def display_text(bg, obg, direction, end):
         bg = round(bg/18, 1)
         diff = round(diff/18, 1)
     display.text(str(bg), 0, 0, 0, scale)
-    pad = display.measure_text(str(bg), scale) 
-    draw_arrow(direction, pad, 0, BLUE)
+    pad = display.measure_text(str(bg), scale)
+    if direction != None:
+        draw_arrow(direction, pad, 0, BLUE)
+    else:
+       print("[-] No Direction Data") 
     if diff > 0:
         prefix = "+"        
     diff = prefix + str(diff)
@@ -132,7 +140,7 @@ def display_graph(data):
             #print(f"[DEBUG] {date}->{x_scaled}: {sgv}->{y_scaled} ({y})")
             display.set_pen(severity(sgv))
             display.circle(x_scaled, y, 2)  
-        display_text(data[0]['sgv'], data[1]['sgv'], data[0]['direction'], end)
+        display_text(data[0]['sgv'], data[1]['sgv'], data[0].get('direction'), end)
         display.update()
     
     
@@ -205,17 +213,17 @@ YELLOW = display.create_pen(255, 255, 0)
 ################################################################
 # Wi-FI Settings
 WIFI_SSID = 'Your_SSID'
-WIFI_PASSWORD = 'Your_Password'
+WIFI_PASSWORD = 'Your_Wifi_Password'
 # NightScout Settings
-NIGHTSCOUT_URL = "https://nightscout.YourDomain.org"
-NIGHTSCOUT_TOKEN = "Pico-0000111122223333"
+NIGHTSCOUT_URL = "https://nightscout.your.domain"
+NIGHTSCOUT_TOKEN = "NS_TOKEN"
 # TimeZone Configuration
-UTC_OFFSET = -5
+UTC_OFFSET = 0
 DST = False  # Daylight Saving Time
 # Min/Max Scale for Blood Glucose in mg/dL
 y_scale_min = 54    #  3mmol
 y_scale_max = 414   # 23mmol 
-mmol = False   # Controls if to display mmol/L instead of mg/dL
+mmol = True   # Controls if to display mmol/L instead of mg/dL
 
 wlan = wifi_connect()
 
@@ -235,21 +243,3 @@ while True:
     check_buttons(data)
     time.sleep_ms(100)
     
-
-
-################################################################
-# User Configurable Settings
-################################################################
-# Wi-FI Settings
-WIFI_SSID = 'Your_SSID'
-WIFI_PASSWORD = 'Your_Wifi_Password'
-# NightScout Settings
-NIGHTSCOUT_URL = "https://nightscout.mydomain.org"
-NIGHTSCOUT_TOKEN = "mytoken-25b31fd888888882"
-# TimeZone Configuration
-UTC_OFFSET = 0
-DST = True  # Daylight Saving Time
-# Min/Max Scale for Blood Glucose in mg/dL
-y_scale_min = 54    #  3mmol
-y_scale_max = 414   # 23mmol 
-mmol = True   # Controls if to display mmol/L instead of mg/dL
